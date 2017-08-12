@@ -1,4 +1,5 @@
 # Import modules
+import numpy as np
 import subprocess
 import ipaddress
 import socket
@@ -12,6 +13,16 @@ net_end = 64 # Cut searching after this number. Avoids scanning full space.
 
 # Dictionary log of all hosts that are online on the network
 online_hosts = {}
+
+# Load list of pre-defined hostnames
+predef_hostnames = {}
+try: # If a file exists
+    f = np.loadtxt("hostname_override.csv", delimiter=",", dtype='bytes').astype('str')
+    for ip, name in f:
+        predef_hostnames[ip] = name
+except:
+    print("No hostname override file found.")
+    pass
 
 # Create the network
 ip_net = ipaddress.ip_network(net_addr)
@@ -31,8 +42,12 @@ def get_hostname(ip_add):
     return socket.getfqdn(str(ip_add))
 
 def async_hostname(ip_add, online_dict):
+    global predef_hostnames
     print("Getting hostname for {}\n".format(ip_add))
-    online_dict[ip_add] = get_hostname(ip_add)
+    if ip_add in predef_hostnames: # If hostname has been manually defined
+        online_dict[ip_add][0] = predef_hostnames[ip_add] # Use manually defined version
+    else:
+        online_dict[ip_add][0] = get_hostname(ip_add) # Update hostname record without changing online status
     print("Found hostname for {} / {}\n".format(ip_add, online_dict[ip_add]))
 
 def is_online(ip_add, mode=0):
@@ -43,7 +58,23 @@ def is_online(ip_add, mode=0):
         return False
     else:
         return True
-    
+
+# Create new host entry
+def insert_host(ip_add, hostname, is_online, online_dict):
+    if is_online:
+        status = "Online"
+    else:
+        status = "Offline"
+    online_dict[ip_add] = [hostname, status]
+
+# Update online status of host entry (merge with above?)
+def update_host(ip_add, is_online, online_dict):
+    if is_online:
+        status = "Online"
+    else:
+        status = "Offline"
+    online_dict[ip_add][1] = status
+
 # Function to run a scan of all IPs in host_list, and log as dictionary to online_dict
 is_scanning = False
 def refresh_online(host_list, online_dict):
@@ -55,16 +86,22 @@ def refresh_online(host_list, online_dict):
         host=str(host) # Ensure string type for IP address
 
         if is_online(host):
-            if not host in online_dict:
-                online_dict[host] = "Unknown"
+            if not host in online_dict: # If this is a new host
+                insert_host(host, "Unknown", True, online_dict) # Insert entry
+                
+                # Start getting hostname in the background
                 t = Thread(target=async_hostname, args=(host, online_dict))
                 t.start()
                 
                 print("{} / {} is Online".format(host, online_dict[host]))
-        else:
-            if host in online_dict:
+                
+            else: # If this is not a new host
+                update_host(host, True, online_dict) # Update online status only
+                
+        else: # If host is not online
+            if host in online_dict: # If host is in list
+                update_host(host, False, online_dict) # Update online status only
                 print(host, "is Offline")
-                del online_dict[host]
                 
     is_scanning = False
     print("Scan finished.")

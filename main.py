@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 print("Running initial extended scan...")
 tools.netscan.refresh_full()
 
-internal_ip = "::1"
+internal_ips = ["::1", "0.0.0.0", "127.0.0.1"]
 
 print("Setting up internal server...")
 app = Flask(__name__)
@@ -14,23 +14,26 @@ app.config['DEBUG'] = True
 def index():
     
     visitor_ip = str(request.remote_addr) # Get visitor IP
+    flag = None
     
     # If visitor IP is already recognised on the subnet
     if visitor_ip in tools.netscan.online_hosts: 
         print("Visitor already recognised") # Do nothing
-        visitor_hostname = tools.netscan.online_hosts[visitor_ip]
         
     # If IP is not recognised, but is on the VPN subnet
     elif (tools.netscan.ipaddress.ip_address(visitor_ip) in tools.netscan.all_hosts): 
-        tools.netscan.online_hosts[visitor_ip] = "FORCED: "+tools.netscan.get_hostname(visitor_ip) # Add the IP and hostname to the table
-        visitor_hostname = tools.netscan.online_hosts[visitor_ip]
+        flag = "FORCED"
         
     else: # If not known AND not on the VPN
-        if visitor_ip != internal_ip: # Exclude IIS servers internal IP
-            tools.netscan.online_hosts[visitor_ip] = "EXTERNAL: "+tools.netscan.get_hostname(visitor_ip) # Add the IP and hostname to the table
-            visitor_hostname = tools.netscan.online_hosts[visitor_ip]
+        if visitor_ip in internal_ips: # Exclude IIS servers internal IP
+            flag = None
         else:
-            visitor_hostname = "INTERNAL SERVER"
+            flag = "EXTERNAL"
+   
+    visitor_hostname = tools.netscan.get_hostname(visitor_ip)
+    
+    if flag: # If host should be added to the table
+        tools.netscan.insert_host(visitor_ip, flag + ':' + visitor_hostname, True, tools.netscan.online_hosts)
 
     name = "{} / {}".format(visitor_ip, visitor_hostname)
     
