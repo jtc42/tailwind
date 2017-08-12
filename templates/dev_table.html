@@ -1,8 +1,21 @@
 <table>    
 {% for key, value in hosts.items() %}
     <tr>
+    
         <td>{{ key }}:</td>
-        <td><b>{{ value }}</b></td>
+            
+        <td><b>{{ value[0] }}</b></td>
+                 
+        <td>
+        {% if value[1] == "Online" %}
+        <font color="green">
+        {% else %}
+        <font color="red">
+        {% endif %}
+        <b>{{ value[1] }}</b>
+        </font>
+        </td>
+        
     </tr>
 {% endfor %}
 </table>

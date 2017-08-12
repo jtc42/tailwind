@@ -44,6 +44,7 @@ def index():
 
 @app.route('/devlist')
 def devlist():
+    tools.netscan.refresh_active()
     return render_template("dev_table.html",
                            hosts=tools.netscan.online_hosts)
 

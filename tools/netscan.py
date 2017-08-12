@@ -84,6 +84,7 @@ def refresh_online(host_list, online_dict):
     # run the ping command with subprocess.popen interface
     for host in host_list:
         host=str(host) # Ensure string type for IP address
+        print("Scanning {}".format(host))
 
         if is_online(host):
             if not host in online_dict: # If this is a new host
@@ -100,6 +101,7 @@ def refresh_online(host_list, online_dict):
                 
         else: # If host is not online
             if host in online_dict: # If host is in list
+                print("{} fell offline.".format(host))
                 update_host(host, False, online_dict) # Update online status only
                 print(host, "is Offline")
                 
