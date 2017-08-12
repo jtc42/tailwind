@@ -34,6 +34,15 @@ def async_hostname(ip_add, online_dict):
     print("Getting hostname for {}\n".format(ip_add))
     online_dict[ip_add] = get_hostname(ip_add)
     print("Found hostname for {} / {}\n".format(ip_add, online_dict[ip_add]))
+
+def is_online(ip_add, mode=0):
+    
+    output = subprocess.Popen(['ping', '-n', '1', '-w', '500', ip_add], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, startupinfo=info).communicate()[0]
+
+    if ("Destination host unreachable" in output.decode('utf-8') or "Request timed out" in output.decode('utf-8')):
+        return False
+    else:
+        return True
     
 # Function to run a scan of all IPs in host_list, and log as dictionary to online_dict
 is_scanning = False
@@ -44,9 +53,8 @@ def refresh_online(host_list, online_dict):
     # run the ping command with subprocess.popen interface
     for host in host_list:
         host=str(host) # Ensure string type for IP address
-        output = subprocess.Popen(['ping', '-n', '1', '-w', '500', host], stdout=subprocess.PIPE, startupinfo=info).communicate()[0]
-        
-        if not ("Destination host unreachable" in output.decode('utf-8') or "Request timed out" in output.decode('utf-8')):
+
+        if is_online(host):
             if not host in online_dict:
                 online_dict[host] = "Unknown"
                 t = Thread(target=async_hostname, args=(host, online_dict))
