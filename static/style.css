@@ -1,0 +1,34 @@
+body { 
+    font-family: sans-serif; 
+    background: #eee; 
+}
+
+.button {
+    display: inline-block;
+}
+
+#buttons {
+    margin-bottom: 20px;
+}
+
+tr {
+    padding: 0px;
+    margin: 0;
+    border: none;
+    border-spacing: 0px;
+}
+
+td {
+    padding: 0 10px 8px 0;
+    margin: 0;
+    border: none;
+    border-spacing: 0px;
+}
+
+table{
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}

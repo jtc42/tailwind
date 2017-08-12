@@ -8,10 +8,10 @@ print("Tailwind 0.1 - Articuno subnet sniffer")
 
 # Network address for VPN subnet
 net_addr = "10.151.25.0/24"
-net_end = 32 # Cut searching after this number. Avoids scanning full space.
+net_end = 64 # Cut searching after this number. Avoids scanning full space.
 
 # Dictionary log of all hosts that are online on the network
-online_hosts = {"10.151.25.0": "TESTHOST"}
+online_hosts = {}
 
 # Create the network
 ip_net = ipaddress.ip_network(net_addr)
@@ -26,6 +26,15 @@ info = subprocess.STARTUPINFO()
 info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 info.wShowWindow = subprocess.SW_HIDE
 
+# Function to return string of hostname from IP address
+def get_hostname(ip_add):
+    return socket.getfqdn(str(ip_add))
+
+def async_hostname(ip_add, online_dict):
+    print("Getting hostname for {}\n".format(ip_add))
+    online_dict[ip_add] = get_hostname(ip_add)
+    print("Found hostname for {} / {}\n".format(ip_add, online_dict[ip_add]))
+    
 # Function to run a scan of all IPs in host_list, and log as dictionary to online_dict
 is_scanning = False
 def refresh_online(host_list, online_dict):
@@ -34,16 +43,20 @@ def refresh_online(host_list, online_dict):
     # For each IP address in the subnet, 
     # run the ping command with subprocess.popen interface
     for host in host_list:
-        output = subprocess.Popen(['ping', '-n', '1', '-w', '500', str(host)], stdout=subprocess.PIPE, startupinfo=info).communicate()[0]
+        host=str(host) # Ensure string type for IP address
+        output = subprocess.Popen(['ping', '-n', '1', '-w', '500', host], stdout=subprocess.PIPE, startupinfo=info).communicate()[0]
         
         if not ("Destination host unreachable" in output.decode('utf-8') or "Request timed out" in output.decode('utf-8')):
-            if not str(host) in online_dict:
-                online_dict[str(host)] = socket.getfqdn(str(host))
-                print(str(host), "is Online")
+            if not host in online_dict:
+                online_dict[host] = "Unknown"
+                t = Thread(target=async_hostname, args=(host, online_dict))
+                t.start()
+                
+                print("{} / {} is Online".format(host, online_dict[host]))
         else:
-            if str(host) in online_dict:
-                print(str(host), "is Offline")
-                del online_dict[str(host)]
+            if host in online_dict:
+                print(host, "is Offline")
+                del online_dict[host]
                 
     is_scanning = False
     print("Scan finished.")

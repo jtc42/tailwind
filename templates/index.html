@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    {% if title %}
+    <title>{{ title }} - microblog</title>
+    {% else %}
+    <title>Welcome to microblog</title>
+    {% endif %}
+  </head>
+  
+  <body>
+  
+    <h1>Hi, {{ name }}!</h1>
+            
+    <h2>Others online: </h2>
+    <div id="buttons">
+    <div id="button_1" class="button"><a id="ServerSort" href="javascript:void(0)">Refresh</a></div>
+    <div id="button_2" class="button"><a id="ServerSort" href="/reload">Rescan</a></div>
+    </div>
+    
+    <div id="device_list"></div>
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <script>
+    function reloadDevs() {
+        $.ajax({
+          url: "/devlist",
+          type: "get",
+          success: function(response) {
+            $("#device_list").html(response);
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+        });
+    }
+
+    $(document).ready(function(){
+        reloadDevs();
+    });
+    
+    window.setInterval(function(){
+        //reloadDevs();
+    }, 10000);
+
+    $("#button_1").on("click", function(e) {
+        reloadDevs();
+    });
+    </script>
+    
+  </body>
+</html>
