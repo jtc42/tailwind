@@ -14,26 +14,29 @@ app.config['DEBUG'] = True
 def index():
     
     visitor_ip = str(request.remote_addr) # Get visitor IP
-    flag = None
+    add_flag = False
     
     # If visitor IP is already recognised on the subnet
     if visitor_ip in tools.netscan.online_hosts: 
         print("Visitor already recognised") # Do nothing
+        visitor_hostname = tools.netscan.online_hosts[visitor_ip][0]
         
     # If IP is not recognised, but is on the VPN subnet
     elif (tools.netscan.ipaddress.ip_address(visitor_ip) in tools.netscan.all_hosts): 
-        flag = "FORCED"
+        add_flag = True
+        visitor_hostname = visitor_ip
         
     else: # If not known AND not on the VPN
         if visitor_ip in internal_ips: # Exclude IIS servers internal IP
-            flag = None
+            flag = False
+            visitor_hostname = "LOCALHOST"
         else:
-            flag = "EXTERNAL"
+            add_flag = True
+            visitor_hostname = "EXTERNAL"
    
-    visitor_hostname = tools.netscan.get_hostname(visitor_ip)
     
-    if flag: # If host should be added to the table
-        tools.netscan.insert_host(visitor_ip, flag + ':' + visitor_hostname, True, tools.netscan.online_hosts)
+    if add_flag: # If host should be added to the table
+        tools.netscan.insert_host(visitor_ip, visitor_hostname, True, tools.netscan.online_hosts)
 
     name = "{} / {}".format(visitor_ip, visitor_hostname)
     
