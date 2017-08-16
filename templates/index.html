@@ -1,6 +1,10 @@
-<html>
+<!DOCTYPE html>
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+                                               
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='raphael-2.1.4.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='justgage.js') }}"></script>
     {% if title %}
     <title>Tailwind - {{ title }}</title>
     {% else %}
@@ -10,20 +14,31 @@
   
   <body>
   
-    <h1>Hi, {{ name }}</h1>
-            
-    <h2>Others online: </h2>
-    <div id="buttons">
-    <div id="button_1" class="button"><a id="ServerSort" href="javascript:void(0)">Refresh</a></div>
-    <div id="button_2" class="button"><a id="ServerSort" href="/reload">Rescan</a></div>
+    <div class="infoblock">
+        <h2> This device: {{ name }} </h2>
+        <div id="device_list"></div>
     </div>
     
-    <div id="device_list"></div>
+    <div id="server_status" class="infoblock">
+    
+    <div class="gauge_block">
+        <div id="cpu_gauge" class="sml_gauge"></div>
+        <div id="cpt_gauge" class="sml_gauge"></div>
+        <div id="ram_gauge" class="sml_gauge"></div>
+    </div>
+    
+    <div class="gauge_block">
+        <div id="gpu_gauge" class="sml_gauge"></div>
+        <div id="gpt_gauge" class="sml_gauge"></div>
+    </div>
     
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
+    
+    </div>
+    
+    
     <script>
+    // Function to reload device list
     function reloadDevs() {
         $.ajax({
           url: "/devlist",
@@ -37,17 +52,73 @@
         });
     }
 
+    // Create CPU gauge
+    var c_gauge = new JustGage({
+        id: "cpu_gauge",
+        value: 67,
+        min: 0,
+        max: 100,
+        title: "CPU Load"
+    });
+
+    // Create CPU T gauge
+    var ct_gauge = new JustGage({
+        id: "cpt_gauge",
+        value: 67,
+        min: 0,
+        max: 100,
+        title: "CPU Temp"
+    });
+
+    // Create GPU gauge
+    var g_gauge = new JustGage({
+        id: "gpu_gauge",
+        value: 67,
+        min: 0,
+        max: 100,
+        title: "GPU Load"
+    });
+
+    // Create GPU T gauge
+    var gt_gauge = new JustGage({
+        id: "gpt_gauge",
+        value: 67,
+        min: 0,
+        max: 100,
+        title: "GPU Temp"
+    });
+
+    // Create RAM gauge
+    var r_gauge = new JustGage({
+        id: "ram_gauge",
+        value: 12,
+        min: 0,
+        max: 100,
+        title: "RAM Load"
+    });
+
+
+    // Function to reload all gauges
+    function reloadGgs() {
+        c_gauge.refresh(getRandomInt(0, 100));
+        ct_gauge.refresh(getRandomInt(0, 100));
+        g_gauge.refresh(getRandomInt(0, 100));
+        gt_gauge.refresh(getRandomInt(0, 100));
+        r_gauge.refresh(getRandomInt(0, 100));
+    }
+
+
     $(document).ready(function(){
         reloadDevs();
+        reloadGgs()
     });
     
     window.setInterval(function(){
         reloadDevs();
+        reloadGgs()
     }, 5000);
 
-    $("#button_1").on("click", function(e) {
-        reloadDevs();
-    });
+
     </script>
     
   </body>
