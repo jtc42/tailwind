@@ -45,6 +45,10 @@ h2 {
     line-height: 64px;
 }
 
+.hmsg {
+    display: inline-block;
+}
+
 .maincontainer {
     display: inline-block;
     margin-top: 74px;
