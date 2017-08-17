@@ -2,7 +2,7 @@ body {
     font-family: 'Roboto', sans-serif;
     color: #565656;
     background: #eee; 
-    min-width:610px;
+    min-width: 560px;
     margin: 0;
 }
 
@@ -76,7 +76,7 @@ h2 {
 
 .infoblock {
     display: inline-block;
-    width: 530px;
+    width: 500px;
 }
 
 #devicelist {

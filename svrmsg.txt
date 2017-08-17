@@ -1,4 +1,1 @@
-Hello from the status beta!
-I did it Mum!
-Just because you can, doesn't mean you should
-This is a server message, and boy does it message
+V1.0 - The 'not much to it' release
