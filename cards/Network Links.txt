@@ -1,0 +1,10 @@
+<table>
+    <tr>
+        <td><b>VPN Local Server</b></td>
+        <td><a target="_blank" href="http://articuno.local.jtcollins.net">articuno.local.jtcollins.net</a></td>
+    </tr>
+    <tr>
+        <td><b>Network Public Site</b></td>  
+        <td><a target="_blank" href="http://remote.jtcollins.net">remote.jtcollins.net</a></td>
+    </tr>
+</table>

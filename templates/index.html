@@ -1,6 +1,7 @@
 <!DOCTYPE html>
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
                                                
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='raphael-2.1.4.min.js') }}"></script>
@@ -12,30 +13,50 @@
     {% endif %}
   </head>
   
-  <body>
-  
-    <div class="infoblock">
-        <h2> This device: {{ name }} </h2>
-        <div id="device_list"></div>
+    <body>
+    
+    <div id="headbar">
+    <div class="hicon"> <img src="{{ url_for('static', filename='svr_icon.svg') }}" height="48px"></div>
+    <div class="htxt">JTCSVR-ARTICUNO <div class="hlight">{{ msg }}</div> </div>
     </div>
     
-    <div id="server_status" class="infoblock">
-    
-    <div class="gauge_block">
-        <div id="cpu_gauge" class="sml_gauge"></div>
-        <div id="cpt_gauge" class="sml_gauge"></div>
-        <div id="ram_gauge" class="sml_gauge"></div>
+    <div class="maincontainer">
+
+        <div id="cardcontainer">
+        
+            <div class="infoblock card">
+            
+                <h2> This device: <div class="hs">{{ name }} </div></h2>
+                <div id="devicelist"></div>
+                
+            </div>
+            
+            <div id="server_status" class="infoblock card centered">
+                <h2 style="float: left;">Server Status</h2>
+            
+                <div class="gauge_block">
+                    <div id="cpu_gauge" class="sml_gauge"></div>
+                    <div id="cpt_gauge" class="sml_gauge"></div>
+                    <div id="ram_gauge" class="sml_gauge"></div>
+                </div>
+                
+                <div class="gauge_block">
+                    <div id="gpu_gauge" class="sml_gauge"></div>
+                    <div id="gpt_gauge" class="sml_gauge"></div>
+                    <div id="gpm_gauge" class="sml_gauge"></div>
+                </div>
+            
+            </div>
+            
+            {% for key, value in cards.items() %}
+                <div class="infoblock card">
+                    <h2> {{key}}</h2>
+                    {{value}}
+                </div>
+            {% endfor %}
+            
+        </div>
     </div>
-    
-    <div class="gauge_block">
-        <div id="gpu_gauge" class="sml_gauge"></div>
-        <div id="gpt_gauge" class="sml_gauge"></div>
-    </div>
-    
-    
-    
-    </div>
-    
     
     <script>
     // Function to reload device list
@@ -44,7 +65,7 @@
           url: "/devlist",
           type: "get",
           success: function(response) {
-            $("#device_list").html(response);
+            $("#devicelist").html(response);
           },
           error: function(xhr) {
             //Do Something to handle error
@@ -52,74 +73,97 @@
         });
     }
 
+    
+    // CREATE GAUGES
+
     // Create CPU gauge
     var c_gauge = new JustGage({
         id: "cpu_gauge",
-        value: 67,
+        value: 0,
         min: 0,
         max: 100,
-        title: "CPU Load"
+        title: "CPU Load (%)"
     });
 
     // Create CPU T gauge
     var ct_gauge = new JustGage({
         id: "cpt_gauge",
-        value: 67,
-        min: 0,
-        max: 100,
-        title: "CPU Temp"
+        value: 0,
+        min: 20,
+        max: 80,
+        title: "CPU Temp (°C)"
     });
 
     // Create GPU gauge
     var g_gauge = new JustGage({
         id: "gpu_gauge",
-        value: 67,
+        value: 0,
         min: 0,
         max: 100,
-        title: "GPU Load"
+        title: "GPU Load (%)"
     });
 
     // Create GPU T gauge
     var gt_gauge = new JustGage({
         id: "gpt_gauge",
-        value: 67,
-        min: 0,
-        max: 100,
-        title: "GPU Temp"
+        value: 0,
+        min: 20,
+        max: 80,
+        title: "GPU Temp (°C)"
     });
 
     // Create RAM gauge
     var r_gauge = new JustGage({
         id: "ram_gauge",
-        value: 12,
+        value: 0,
         min: 0,
         max: 100,
-        title: "RAM Load"
-    });
-
-
-    // Function to reload all gauges
-    function reloadGgs() {
-        c_gauge.refresh(getRandomInt(0, 100));
-        ct_gauge.refresh(getRandomInt(0, 100));
-        g_gauge.refresh(getRandomInt(0, 100));
-        gt_gauge.refresh(getRandomInt(0, 100));
-        r_gauge.refresh(getRandomInt(0, 100));
-    }
-
-
-    $(document).ready(function(){
-        reloadDevs();
-        reloadGgs()
+        title: "Memory Load (%)"
     });
     
+    // Create GPU mem gauge
+    var gm_gauge = new JustGage({
+        id: "gpm_gauge",
+        value: 0,
+        min: 0,
+        max: 100,
+        title: "GPU Memory Load (%)"
+    });
+
+    
+    // UPDATE GAUGES
+    
+    // Reload status and gauges
+    function reloadStats() {
+        var stat_dict = {};
+        $.getJSON("/status", function(result){
+            $.each(result, function(i, field){
+                stat_dict[i] = field;
+            });
+            
+            c_gauge.refresh(stat_dict["CPU Total/Load"]);
+            ct_gauge.refresh(stat_dict["CPU Package/Temperature"]);
+            g_gauge.refresh(stat_dict["GPU Core/Load"]);
+            gt_gauge.refresh(stat_dict["GPU Core/Temperature"]);
+            r_gauge.refresh(stat_dict["Memory/Load"]);
+            gm_gauge.refresh(stat_dict["GPU Memory/Load"]);
+        });
+    }
+
+    // Update all dynamics on load
+    $(document).ready(function(){
+        reloadDevs();
+        reloadStats()
+    });
+    
+    // Update all dynamics every 5000ms
     window.setInterval(function(){
         reloadDevs();
-        reloadGgs()
+        reloadStats()
     }, 5000);
 
 
     </script>
     
-  </body>
+    </body>
 </html>
