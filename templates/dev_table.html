@@ -2,37 +2,25 @@
     <tr class="spaceUnder">
         <td></td>
         <td>Name</td>
-        <td>Virtual IP</td>
-        <td>Real IP</td>
-        <td>Connected since</td>
+        <td>LAN IP</td>
     </tr> 
-{% for key, value in hosts.items() %}
+    {% for host in hosts %}
     <tr>
-    
         <td>
-        {% if value['v_add'] %}
+        {% if host['online'] %}
         <div class="ind online"></div>
         {% else %}
-        <div class="ind offline"></div>
+        <div class="ind excline"></div>
         {% endif %}
         </td>
     
-        <td>{{ key }}</td>
+        <td>{{ host['name'] }}</td>
      
         <td>
         <b>
-        {% if value['v_add'] %}
-        {{ value['v_add'] }}
-        {% else %}
-        Offline
-        {% endif %}
+        <a href="{{ host['url'] }}" target="_blank">{{ host['url'] }}</a>
         </b>
         </td>
-        
-        <td>{{ value['r_add'] }}</td>
-              
-        <td>{{ value['t_con'] }}</td>
-        
     </tr>
-{% endfor %}
+    {% endfor %}
 </table>

@@ -1,0 +1,36 @@
+<table>
+    <tr class="spaceUnder">
+        <td></td>
+        <td>Name</td>
+        <td>Virtual IP</td>
+        <td>Real IP</td>
+        <td>Connected since</td>
+    </tr> 
+    {% for key, value in hosts.items() %}
+    <tr>
+        <td>
+        {% if value['v_add'] %}
+        <div class="ind online"></div>
+        {% else %}
+        <div class="ind offline"></div>
+        {% endif %}
+        </td>
+    
+        <td>{{ key }}</td>
+     
+        <td>
+        <b>
+        {% if value['v_add'] %}
+        {{ value['v_add'] }}
+        {% else %}
+        Offline
+        {% endif %}
+        </b>
+        </td>
+        
+        <td>{{ value['r_add'] }}</td>
+              
+        <td>{{ value['t_con'] }}</td> 
+    </tr>
+    {% endfor %}
+</table>

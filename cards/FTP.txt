@@ -1,0 +1,2 @@
+<b>An example card</b>
+<p>General static content can be added to cards using this files.</p>
