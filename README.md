@@ -2,6 +2,7 @@
 Subnet monitor for Windows, used on Articuno network
 
 ## Requirements
+Easy-install using requirements.txt (pip) or environment.yml (conda). Use -win versions if running on Windows
 * Flask
 ### Windows (for system monitoring with OpenHardwareMonitor)
 * OpenHardwareMonitor
