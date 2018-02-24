@@ -1,39 +1,38 @@
 <!DOCTYPE html>
-  <head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-                                               
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='raphael-2.1.4.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='justgage.js') }}"></script>
-    {% if title %}
-    <title>Tailwind - {{ title }}</title>
-    {% else %}
-    <title>Tailwind</title>
-    {% endif %}
-  </head>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename=favicon) }}">
+        
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="{{ url_for('static', filename='raphael-2.1.4.min.js') }}"></script>
+        
+        {% if title %}
+        <title>Tailwind - {{ title }}</title>
+        {% else %}
+        <title>Tailwind</title>
+        {% endif %}
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.8">
+        <meta name="theme-color" content="{{ colour }}">
+        <meta name="mobile-web-app-capable" content="yes">
+    </head>
   
     <body>
     
-    <div id="headbar">
-    <div class="hicon"> <img src="{{ url_for('static', filename='svr_icon.svg') }}" height="48px"></div>
-    <div class="htxt">JTCSVR-ARTICUNO <div class="hlight hmsg">{{ msg }}</div> </div>
+    <div id="headbar" style="background: {{ colour }};">
+
+    <div class="hicon"> <img src="{{ url_for('static', filename=emblem) }}" height="48px"></div>
+    <div class="htxt">{{ title }} <div class="hlight hmsg">{{ msg }}</div> </div>
+    <div class="hemblem"> <img src="{{ url_for('static', filename='emblem_jtcollins_white.svg') }}" height="48px"></div>
     </div>
     
     <div class="maincontainer">
 
         <div id="cardcontainer">
         
-            <div class="infoblock card">
-            
-                <h2> This device: <div class="hs">{{ name }} </div></h2>
-                <div id="devicelist"></div>
-                
-            </div>
-            
+            {% if 'sysinfo' in cards %}
             <div id="server_status" class="infoblock card centered">
-                <h2 style="float: left;">Server Status</h2>
+                <h2 style="float: left;">Server Load</h2>
             
                 <div class="gauge_block">
                     <div id="cpu_gauge" class="sml_gauge"></div>
@@ -46,125 +45,52 @@
                     <div id="gpt_gauge" class="sml_gauge"></div>
                     <div id="gpm_gauge" class="sml_gauge"></div>
                 </div>
-            
             </div>
+            <script src="{{ url_for('static', filename='justgage.js') }}"></script>
+            <script src="{{ url_for('static', filename='card_js/reload_gauges.js') }}"></script>
+            {% endif %}
+        
+            {% if 'vpnscan' in cards %}
+            <div class="infoblock card">
+                <h2> OpenVPN Clients</h2>
+                <div id="vpnlist" class="devicelist"></div>
+            </div>
+            <script src="{{ url_for('static', filename='card_js/reload_vpn.js') }}"></script>
+            {% endif %}
             
-            {% for key, value in cards.items() %}
+            {% if 'netscan' in cards %}
+            <div class="infoblock card">
+                <h2> Hosts</h2>
+                <div id="devlist" class="devicelist"></div>
+            </div>
+            <script src="{{ url_for('static', filename='card_js/reload_devs.js') }}"></script>
+            {% endif %}
+            
+            {% for key, value in static_cards.items() %}
                 <div class="infoblock card">
                     <h2> {{key}}</h2>
                     {{value}}
                 </div>
             {% endfor %}
             
+            {% if 'platform' in cards %}
+            <div class="infoblock card">
+                <h2> Platform</h2>
+                <table>
+                    {% for key, data in platform.items() %}
+                    <tr>
+                        <td><b>{{data['name']}}</b></td>
+                        <td>{{data['val']}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endif %}
+            
         </div>
     </div>
     
-    <script>
-    // Function to reload device list
-    function reloadDevs() {
-        $.ajax({
-          url: "/devlist",
-          type: "get",
-          success: function(response) {
-            $("#devicelist").html(response);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-          }
-        });
-    }
-
     
-    // CREATE GAUGES
-
-    // Create CPU gauge
-    var c_gauge = new JustGage({
-        id: "cpu_gauge",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "CPU Load (%)"
-    });
-
-    // Create CPU T gauge
-    var ct_gauge = new JustGage({
-        id: "cpt_gauge",
-        value: 0,
-        min: 20,
-        max: 80,
-        title: "CPU Temp (°C)"
-    });
-
-    // Create GPU gauge
-    var g_gauge = new JustGage({
-        id: "gpu_gauge",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "GPU Load (%)"
-    });
-
-    // Create GPU T gauge
-    var gt_gauge = new JustGage({
-        id: "gpt_gauge",
-        value: 0,
-        min: 20,
-        max: 80,
-        title: "GPU Temp (°C)"
-    });
-
-    // Create RAM gauge
-    var r_gauge = new JustGage({
-        id: "ram_gauge",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "Memory Load (%)"
-    });
-    
-    // Create GPU mem gauge
-    var gm_gauge = new JustGage({
-        id: "gpm_gauge",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "GPU Memory Load (%)"
-    });
-
-    
-    // UPDATE GAUGES
-    
-    // Reload status and gauges
-    function reloadStats() {
-        var stat_dict = {};
-        $.getJSON("/status", function(result){
-            $.each(result, function(i, field){
-                stat_dict[i] = field;
-            });
-            
-            c_gauge.refresh(stat_dict["CPU Total/Load"]);
-            ct_gauge.refresh(stat_dict["CPU Package/Temperature"]);
-            g_gauge.refresh(stat_dict["GPU Core/Load"]);
-            gt_gauge.refresh(stat_dict["GPU Core/Temperature"]);
-            r_gauge.refresh(stat_dict["Memory/Load"]);
-            gm_gauge.refresh(stat_dict["GPU Memory/Load"]);
-        });
-    }
-
-    // Update all dynamics on load
-    $(document).ready(function(){
-        reloadDevs();
-        reloadStats()
-    });
-    
-    // Update all dynamics every 5000ms
-    window.setInterval(function(){
-        reloadDevs();
-        reloadStats()
-    }, 5000);
-
-
-    </script>
     
     </body>
 </html>

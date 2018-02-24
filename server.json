@@ -1,0 +1,28 @@
+{
+"title": "MY-SERVER", 
+"emblem": "emblem_porygon_white.svg", 
+"favicon": "favicon_porygon.ico", 
+"colour": "#00b7ca", 
+"message": "Nice, a server message.",
+
+"ovpn_path": "/etc/openvpn",
+
+"cards": 
+    [
+        "vpnscan", 
+        "netscan",
+        "platform"
+    ], 
+    
+"hosts": 
+    [
+        {
+            "url": "http://0.0.0.0/", 
+            "name": "Localhost (Internal)"
+        }, 
+        {
+            "url": "https://www.jtcollins.net", 
+            "name": "My Example Website"
+        }
+    ]
+}
