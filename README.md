@@ -8,11 +8,13 @@ Easy-install using requirements.txt (pip) or environment.yml (conda). Use -win v
 * OpenHardwareMonitor
 * pywin32
 * wmi
+* wfastcgi
 
 ## Usage
 * Edit `server.json` with your server info, and choice of cards
 * Add .txt files to `cards` folder to add static-content cards
 * Run `main.py`, or run through a WSGI server
+  * **If on IIS:** Within the environment/venv being used, run 'wfastcgi-enable', and use the returned FastCGI script processor under Handler Mappings
 
 ## server.json
 ### cards
