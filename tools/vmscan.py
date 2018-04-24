@@ -62,7 +62,18 @@ def vm_dict():
         # Fix up data formats
         for vm in vm_dict_list:
             # Format uptime
-            vm['Uptime'] = "{}d{}h{}m".format(*re.split("\.|\:", vm['Uptime'])[:3])
+            uptime_d_t_ms = vm['Uptime'].split(".")
+            if len(uptime_d_t_ms) > 2:
+                uptime_days = uptime_d_t_ms[0]
+                uptime_time = uptime_d_t_ms[1]
+            else:
+                uptime_days = 0
+                uptime_time = uptime_d_t_ms[0]
+            
+            uptime_h_m_s = uptime_time.split(":")
+            uptime_d_h_m = [uptime_days, uptime_h_m_s[0], uptime_h_m_s[1]]
+
+            vm['Uptime'] = "{}d{}h{}m".format(*uptime_d_h_m)
             # Format memory assigned
             vm['MemoryAssigned'] = int(int(vm['MemoryAssigned'])/1E6)
             # Convert CPU pct string to int
