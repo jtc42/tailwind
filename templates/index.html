@@ -66,6 +66,14 @@
             <script src="{{ url_for('static', filename='card_js/reload_devs.js') }}"></script>
             {% endif %}
             
+            {% if 'vmscan' in cards %}
+            <div class="infoblock card">
+                <h2> Hyper-V</h2>
+                <div id="vmlist" class="devicelist"></div>
+            </div>
+            <script src="{{ url_for('static', filename='card_js/reload_vm.js') }}"></script>
+            {% endif %}
+
             {% for key, value in static_cards.items() %}
                 <div class="infoblock card">
                     <h2> {{key}}</h2>

@@ -1,6 +1,0 @@
-name: tailwind
-channels:
-  - defaults
-  - conda-forge
-dependencies:
-  - flask

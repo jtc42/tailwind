@@ -71,6 +71,16 @@ if 'netscan' in SERVER_INFO['cards']:
                                )
 
 
+if 'vmscan' in SERVER_INFO['cards']:
+    from tools import vmscan
+    @app.route('/vmdevs')
+    def vmdevs():
+        hosts = vmscan.vm_dict()
+        return render_template("vm_table.html",
+                               hosts=hosts
+                               )
+
+
 if 'vpnscan' in SERVER_INFO['cards']:
     from tools import vpnscan
     vpn_sniffer_win = vpnscan.VpnSniffer(SERVER_INFO['ovpn_path'])
@@ -86,12 +96,12 @@ if 'sysinfo' in SERVER_INFO['cards']:
     from tools import sysinfo
     @app.route('/status')
     def status():
-        sensors = [('CPU Total', 'Load'), 
-                   ('CPU Package', 'Temperature'), 
-                   ('GPU Core', 'Load'), 
-                   ('GPU Core', 'Temperature'), 
-                   ('Memory', 'Load'), 
-                   ('GPU Memory', 'Load')
+        sensors = ['CPU Total/Load', 
+                   'CPU Package/Temperature', 
+                   'GPU Core/Load', 
+                   'GPU Core/Temperature', 
+                   'Memory/Load', 
+                   'GPU Memory/Load',
                    ]
         j = sysinfo.get_all(sensors)
         return jsonify(j)
