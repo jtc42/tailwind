@@ -91,11 +91,73 @@ if 'vpnscan' in SERVER_INFO['cards']:
                                hosts=vpn_sniffer_win.devices
                                )
 
-
 if 'sysinfo' in SERVER_INFO['cards']:
+    # TODO: More intelligently get info from OHWM so gauges and sysinfo don't both call at the same time? Check performance hit.
     from tools import sysinfo
-    @app.route('/status')
-    def status():
+    @app.route('/sysinfo')
+    def sysinfo_card():
+        # Get all OHWM system info in one shot
+        j = sysinfo.get_all()
+
+        hosts = []
+        spacer = {'name': "", 'load': "", 'info': "", 'extra': ""}
+
+        # Add CPU package info
+        d = {
+            'name': "CPU Package", 
+            'load': "{:04.1f} %".format(j["CPU Total/Load"]), 
+            'info': "{} W".format(j["CPU Package/Power"]), 
+            'extra': "{:04.1f} °C".format(j["CPU Package/Temperature"])
+        }
+
+        hosts.append(d)
+        hosts.append(spacer)
+
+        # Add all available CPU core info
+        n_core = 1  # Initial CPU core
+        while "CPU Core #{}/Load".format(n_core) in j:  # Iterate over all cores
+            d = {
+                'name': "CPU Core #{}".format(n_core), 
+                'load': "{:04.1f} %".format(j["CPU Core #{}/Load".format(n_core)]), 
+                'info': "{:06.1f} MHz".format(j["CPU Core #{}/Clock".format(n_core)]), 
+                'extra': "{:04.1f} °C".format(j["CPU Core #{}/Temperature".format(n_core)])
+            }
+
+            hosts.append(d)
+            n_core = n_core + 1
+        
+        hosts.append(spacer)
+
+        # Add GPU package info
+        if "GPU Core/Clock" in j:
+            d = {
+                'name': "GPU Core", 
+                'load': "{:04.1f} %".format(j["GPU Core/Load"]), 
+                'info': "{:06.1f} MHz".format(j["GPU Core/Clock"]), 
+                'extra': "{:04.1f} °C".format(j["GPU Core/Temperature"])
+            }
+
+            hosts.append(d)
+            hosts.append(spacer)
+
+        # Add memory info
+            d = {
+                'name': "Memory", 
+                'load': "{:04.1f} %".format(j["Memory/Load"]), 
+                'info': "{} Used".format(j["Used Memory/Data"]), 
+                'extra': "{} Free".format(j["Available Memory/Data"])
+            }
+
+            hosts.append(d)
+
+        return render_template("sys_table.html",
+                                hosts=hosts
+                                )
+
+if 'gauges' in SERVER_INFO['cards']:
+    from tools import sysinfo
+    @app.route('/gauges')
+    def gauges():
         sensors = ['CPU Total/Load', 
                    'CPU Package/Temperature', 
                    'GPU Core/Load', 

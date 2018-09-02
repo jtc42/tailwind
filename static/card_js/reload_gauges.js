@@ -60,7 +60,7 @@ var gm_gauge = new JustGage({
 // Reload status and gauges
 function reloadStats() {
     var stat_dict = {};
-    $.getJSON("/status", function(result){
+    $.getJSON("/gauges", function(result){
         $.each(result, function(i, field){
             stat_dict[i] = field;
         });

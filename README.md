@@ -21,7 +21,8 @@ Easy-install using requirements.txt (pip) or environment.yml (conda). Use -win v
 * **vpnscan** - Info on clients connected to an OpenVPN server located at the specific `ovpn_path`
 * **netscan** - Online/offline status of all hosts listed in the `hosts` parameter
 * **vmscan** - Info about Hyper-V VMs hosted on the Tailwind host machine. *Requires your Application Pool user to be part of the Hyper-V Administrators group*
-* **sysinfo** (Windows only) - CPU, memory, and GPU load and temperature info, obtained from OpenHardwareMonitor
+* **gauges** (Windows only) - CPU, memory, and GPU load and temperature gauges, obtained from OpenHardwareMonitor
+* **sysinfo** (Windows only) - More detailed system info, obtained from OpenHardwareMonitor
 * **platform** - Basic platform info for the host hardware
 
 ### hosts

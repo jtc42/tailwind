@@ -1,0 +1,10 @@
+<table>
+    {% for host in hosts %}
+    <tr>
+        <td><b>{{ host['name'] }}</b></td>
+        <td>{{ host['load'] }}</td>
+        <td>{{ host['info'] }}</td>
+        <td>{{ host['extra'] }}</td>
+    </tr>
+    {% endfor %}
+</table>

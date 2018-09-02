@@ -3,7 +3,7 @@ import os
 import re
 
 # Get formatted string of Hyper-V stats
-def ps_str(cmd, error_string = None, debug=True):
+def ps_str(cmd, error_string = None, debug=False):
     command = 'powershell.exe \"{}\"'.format(cmd)
 
     # Open subprocess
