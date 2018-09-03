@@ -5,6 +5,8 @@ import os
 import platform
 import json
 
+from tools import cpuinfo
+
 # SET UP APP
 print("Setting up internal server...")
 app = Flask(__name__)
@@ -33,12 +35,13 @@ STATIC_CARDS = get_static_cards("cards/*.txt")
 SERVER_INFO = json.load(open('server.json'))
 
 # GET PLATFORM DATA
-PLATFORM_DATA = {
-        'node': {'name': 'Node', 'val': platform.node()},
-        'os': {'name': 'Operating System', 'val': platform.platform()},
-        'arch': {'name': 'Architecture', 'val': platform.machine()},
-        'pyver': {'name': 'Python Version', 'val': platform.python_version()}
-        }
+PLATFORM_DATA = [
+    {'name': 'Node', 'val': platform.node()},
+    {'name': 'Processor', 'val': cpuinfo.cpu.info[0]['ProcessorNameString']},
+    {'name': 'Operating System', 'val': platform.platform()},
+    {'name': 'Architecture', 'val': platform.machine()},
+    {'name': 'Python Version', 'val': platform.python_version()}
+]
   
 # CREATE ROUTES
 @app.route('/')

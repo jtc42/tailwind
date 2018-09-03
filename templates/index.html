@@ -133,7 +133,7 @@
             <div class="infoblock card">
                 <h2> Platform</h2>
                 <table>
-                    {% for key, data in platform.items() %}
+                    {% for data in platform %}
                     <tr>
                         <td><b>{{data['name']}}</b></td>
                         <td>{{data['val']}}</td>
