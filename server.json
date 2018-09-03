@@ -9,9 +9,11 @@
 
 "cards": 
     [
-        "vpnscan", 
-        "netscan",
-        "platform"
+        "gauges",
+        "netscan", 
+        "sysinfo",
+        "platform",
+        "diskinfo"
     ], 
     
 "hosts": 

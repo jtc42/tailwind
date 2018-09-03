@@ -1,6 +1,7 @@
 <!DOCTYPE html>
     <head>
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='w3.css') }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename=favicon) }}">
         
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
@@ -63,6 +64,21 @@
             </div>
             <script src="{{ url_for('static', filename='card_js/reload_sysinfo.js') }}"></script>
             {% endif %}
+
+            {% if 'diskinfo' in cards %}
+            <div class="infoblock card">
+                <h2> Storage Load</h2>
+                <div id="disklist" class="devicelist">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                      </div>
+                </div>
+            </div>
+            <script src="{{ url_for('static', filename='card_js/reload_diskinfo.js') }}"></script>
+            {% endif %}
+        
         
             {% if 'vpnscan' in cards %}
             <div class="infoblock card">

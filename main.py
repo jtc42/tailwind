@@ -91,6 +91,17 @@ if 'vpnscan' in SERVER_INFO['cards']:
                                hosts=vpn_sniffer_win.devices
                                )
 
+if 'diskinfo' in SERVER_INFO['cards']:
+    from tools import diskscan
+    @app.route('/diskinfo')
+    def diskinfo():
+        # Get all drive info
+        hosts = diskscan.get_all()
+
+        return render_template("disk_table.html",
+                                hosts=hosts
+                                )
+
 if 'sysinfo' in SERVER_INFO['cards']:
     # TODO: More intelligently get info from OHWM so gauges and sysinfo don't both call at the same time? Check performance hit.
     from tools import sysinfo
