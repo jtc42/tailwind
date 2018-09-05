@@ -102,7 +102,8 @@ if 'diskinfo' in SERVER_INFO['cards']:
         hosts = diskscan.get_all()
 
         return render_template("disk_table.html",
-                                hosts=hosts
+                                hosts=hosts,
+                                colour=SERVER_INFO['colour']
                                 )
 
 if 'sysinfo' in SERVER_INFO['cards']:
