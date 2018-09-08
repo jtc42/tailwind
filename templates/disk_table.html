@@ -1,11 +1,17 @@
 <table>
     {% for host in hosts %}
+    {% if host['load'] < 22 %}
+    {% set tcolour = "#000" %}
+    {% else %}
+    {% set tcolour = "#fff" %}
+    {% endif %}
+
     <tr>
         <td><b>{{ host['device'] }}</b></td>
         <td align="right">{{ "{0:.0f} GB free of".format(host['free']) }}</td>
         <td>{{ "{0:.0f} GB".format(host['total']) }}</td>
         <td style="width:200px;">
-            <div class="w3-dark-grey w3-border w3-border-dark-grey w3-round">
+            <div class="w3-light-grey w3-border w3-border-grey w3-round" style="color:{{tcolour}}!important;">
                 <div class="w3-container" style="width:{{ host['load'] }}%; background-color: {{ colour }}"> {{ "{0:.0f} %".format(host['load']) }} </div>
             </div>
         </td>
