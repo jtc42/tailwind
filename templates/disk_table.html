@@ -11,7 +11,7 @@
         <td align="right">{{ "{0:.0f} GB free of".format(host['free']) }}</td>
         <td>{{ "{0:.0f} GB".format(host['total']) }}</td>
         <td style="width:200px;">
-            <div class="w3-light-grey w3-border w3-border-grey w3-round" style="color:{{tcolour}}!important;">
+            <div class="w3-light-grey w3-border w3-border-grey" style="color:{{tcolour}}!important;">
                 <div class="w3-container" style="width:{{ host['load'] }}%; background-color: {{ colour }}"> {{ "{0:.0f} %".format(host['load']) }} </div>
             </div>
         </td>
