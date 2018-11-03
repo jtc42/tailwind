@@ -1,5 +1,5 @@
 # tailwind
-Subnet monitor for Windows, used on Articuno network
+Subnet monitor for Windows, running on a Flask server.
 
 ## Requirements
 Easy-install using requirements.txt (pip) or environment.yml (conda). Use -win versions if running on Windows
